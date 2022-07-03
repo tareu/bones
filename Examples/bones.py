@@ -101,8 +101,8 @@ class NeuralNet:
                     self.weights[x][y][z] = (random.random() * (0.9 ** self.generation)) - (0.5 * (9 ** self.generation)) + previousBest
     def nextGeneration(self):
         self.generation = self.generation + 1
-        narrowRandomiseWeights(self)
-        narrowRandomiseBiases(self)
+        self.narrowRandomiseWeights()
+        self.narrowRandomiseBiases()
 
     def randomiseBiases(self):
         # for each layer except first
@@ -133,15 +133,15 @@ class NeuralNet:
     def propagateForward(self):
         # for each layer except first
         for x in range(1, len(self.layers)):
-                # for every node in layer
-                for y in range(len(self.layers[x])):
-                    sumOfWeights = 0
-                    # for every node in previous layer
-                    for z in range(len(self.layers[x - 1])):
-                        # multiply previous node value with weight
-                        sumOfWeights = sumOfWeights + (self.weights[x][y][z] * self.layers[x - 1][z].value)
-                    sumOfWeights = sumOfWeights + self.biases[x][y]
-                    self.layers[x][y].value = sigmoid(sumOfWeights)
+            # for every node in layer
+            for y in range(len(self.layers[x])):
+                sumOfWeights = 0
+                # for every node in previous layer
+                for z in range(len(self.layers[x - 1])):
+                    # multiply previous node value with weight
+                    sumOfWeights = sumOfWeights + (self.weights[x][y][z] * self.layers[x - 1][z].value)
+                sumOfWeights = sumOfWeights + self.biases[x][y]
+                self.layers[x][y].value = sigmoid(sumOfWeights)
 #layerConfiguration = [6, 5, 28, 4, 39, 6]
 #for x in range(10):
 #   print("nn", x)
