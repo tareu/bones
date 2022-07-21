@@ -85,10 +85,11 @@ class NeuralNet:
                 # for each node in previous layer
                 for z in range(len(self.layers[x - 1])):
                     #print(x, y, z)
-                    self.weights[x][y][z] = random.random() - 0.5
+                    self.weights[x][y][z] = (random.random() * 2) - 0.5
                     #for next gen, if prev best was -0.3,  random.random/2 - 0.5 + prevbest , which equals new halfed range centred on previous best answer
                     #print("weight layer =", x, "node =", y, "previous node =", z, self.weights[x][y][z])
 
+#   not in use anymore
     def narrowRandomiseWeights(self):
         # for each layer
         for x in range(1, len(self.layers)): 
@@ -99,15 +100,19 @@ class NeuralNet:
                     #print(x, y, z)
                     previousBest = self.weights[x][y][z]
                     self.weights[x][y][z] = (random.random() * (0.9 ** self.generation)) - (0.5 * (9 ** self.generation)) + previousBest
-    def nextGeneration(self, previousBestNN):
+
+    def nextGeneration(self, firstParent, secondParent):
         for x in range(1, len(self.layers)): 
             # for each node in layer
             for y in range(len(self.layers[x])):
                 diceRoll = random.random()
+                if diceRoll > 0.5:
+                    self.biases[x][y] = secondParent.biases[x][y]
+                if diceRoll <= 0.5:
+                    self.biases[x][y] = firstParent.biases[x][y]
+                diceRoll = random.random()
                 if diceRoll > 0.999:
                     self.biases[x][y] = (random.random() * 40) - 20
-                if diceRoll <= 0.999:
-                    self.biases[x][y] = previousBestNN.biases[x][y]
         for x in range(1, len(self.layers)): 
             # for each node in layer
             for y in range(len(self.layers[x])):
@@ -115,9 +120,13 @@ class NeuralNet:
                 for z in range(len(self.layers[x - 1])):
                     diceRoll = random.random()
                     if diceRoll > 0.5:
-                        self.weights[x][y][z] = (random.random()*2) - 0.5
-                    if diceRoll < 0.5:
-                        self.weights[x][y][z] = previousBestNN.weights[x][y][z]
+                        self.weights[x][y][z] = secondParent.weights[x][y][z]
+                    if diceRoll <= 0.5:
+                        self.weights[x][y][z] = firstParent.weights[x][y][z]
+                    diceRoll = random.random()
+                    if diceRoll > 0.999:
+                        self.weights[x][y][z] = (random.random() * 2) - 1
+
                     #print(x, y, z)
 
     def randomiseBiases(self):
@@ -126,6 +135,8 @@ class NeuralNet:
             # for each node in layer
             for y in range(len(self.layers[x])):
                 self.biases[x][y] = (random.random() * 40) - 20
+
+#   not in use anymore
     def narrowRandomiseBiases(self):
         # for each layer except first
         for x in range(1, len(self.layers)): 

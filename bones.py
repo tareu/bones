@@ -99,10 +99,26 @@ class NeuralNet:
                     #print(x, y, z)
                     previousBest = self.weights[x][y][z]
                     self.weights[x][y][z] = (random.random() * (0.9 ** self.generation)) - (0.5 * (9 ** self.generation)) + previousBest
-    def nextGeneration(self):
-        self.generation = self.generation + 1
-        self.narrowRandomiseWeights()
-        self.narrowRandomiseBiases()
+    def nextGeneration(self, previousBestNN):
+        for x in range(1, len(self.layers)): 
+            # for each node in layer
+            for y in range(len(self.layers[x])):
+                diceRoll = random.random()
+                if diceRoll > 0.999:
+                    self.biases[x][y] = (random.random() * 40) - 20
+                if diceRoll <= 0.999:
+                    self.biases[x][y] = previousBestNN.biases[x][y]
+        for x in range(1, len(self.layers)): 
+            # for each node in layer
+            for y in range(len(self.layers[x])):
+                # for each node in previous layer
+                for z in range(len(self.layers[x - 1])):
+                    diceRoll = random.random()
+                    if diceRoll > 0.5:
+                        self.weights[x][y][z] = (random.random()*2) - 0.5
+                    if diceRoll < 0.5:
+                        self.weights[x][y][z] = previousBestNN.weights[x][y][z]
+                    #print(x, y, z)
 
     def randomiseBiases(self):
         # for each layer except first
